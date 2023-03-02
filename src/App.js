@@ -1,7 +1,8 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import Cart from "./components/Cart/Cart.js";
 import Header from "./components/Layout/Header";
 import Meals from "./components/Meals/Meals";
+import CartContextProvider from "./store/CartContextProvider.js";
 
 function App() {
   const [viewModal, setViewModal] = useState(false);
@@ -9,11 +10,11 @@ function App() {
     setViewModal(!viewModal)
   }
   return (
-    <Fragment>
+    <CartContextProvider>
       {viewModal && <Cart viewModal={viewModalHandler} />}
-      <Header />
+      <Header viewModal={viewModalHandler} />
       <Meals />
-    </Fragment>
+    </CartContextProvider>
   );
 }
 
