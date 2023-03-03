@@ -14,6 +14,7 @@ const MealItemForm = (props) => {
         }
         props.addItemAmount(+inputValue);
         setInputIsValid(true);
+        amountInputRef.current.value = 1;
     }
     return (
         <form className={styles.form} onSubmit={submitHandler}>

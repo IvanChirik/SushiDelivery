@@ -9,6 +9,7 @@ function App() {
   const viewModalHandler = () => {
     setViewModal(!viewModal)
   }
+
   return (
     <CartContextProvider>
       {viewModal && <Cart viewModal={viewModalHandler} />}

@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import CartContext from './cart-context';
 
 const defaultCartState = {
@@ -6,6 +6,14 @@ const defaultCartState = {
     totalAmount: 0,
 }
 const cartReducer = (state, action) => {
+    if (action.type === 'CLEAR_CART') {
+        localStorage.setItem('cartState', JSON.stringify(defaultCartState));
+        return defaultCartState;
+    }
+    if (action.type === 'UPDATE_STATE') {
+        return action.updateState ? action.updateState : defaultCartState;
+
+    }
     if (action.type === 'ADD_ITEM') {
         let updateTotalAmount = state.totalAmount + action.item.price * action.item.amount;
         let updateItem, updateItems;
@@ -28,6 +36,10 @@ const cartReducer = (state, action) => {
             }
             updateItems = state.items.concat(updateItem);
         }
+        localStorage.setItem('cartState', JSON.stringify({
+            items: updateItems,
+            totalAmount: updateTotalAmount,
+        }))
         return {
             items: updateItems,
             totalAmount: updateTotalAmount,
@@ -48,6 +60,10 @@ const cartReducer = (state, action) => {
             updateItems = [...state.items];
             updateItems[existingCartItemIndex] = updateItem;
         }
+        localStorage.setItem('cartState', JSON.stringify({
+            items: updateItems,
+            totalAmount: updateTotalAmount,
+        }));
         return {
             items: updateItems,
             totalAmount: updateTotalAmount,
@@ -56,18 +72,28 @@ const cartReducer = (state, action) => {
 }
 const CartContextProvider = (props) => {
     const [cartState, dispatchCartAmount] = useReducer(cartReducer, defaultCartState);
-
+    const updateCartItems = (saveCartState) => {
+        dispatchCartAmount({ type: 'UPDATE_STATE', updateState: saveCartState })
+    }
     const addCartItem = (item) => {
         dispatchCartAmount({ type: 'ADD_ITEM', item: item })
     }
     const removeCartItem = (id) => {
         dispatchCartAmount({ type: 'REMOVE_ITEM', id: id })
     }
+    const clearCartItems = () => {
+        dispatchCartAmount({ type: 'CLEAR_CART' });
+    }
+    useEffect(() => {
+        updateCartItems(JSON.parse(localStorage.getItem('cartState')));
+    }, []);
     const startCartContext = {
         items: cartState.items,
         totalAmount: cartState.totalAmount,
         addItem: addCartItem,
         removeItem: removeCartItem,
+        updateItems: updateCartItems,
+        clearCart: clearCartItems,
     }
     return (
         <CartContext.Provider value={startCartContext}>{props.children}</CartContext.Provider>

@@ -16,10 +16,13 @@ const Cart = (props) => {
     const cartItem = (<ul className={styles['cart-items']}>{cartContext.items.map((item) => {
         return <CartItem price={item.price} name={item.name} amount={item.amount} key={item.id} onRemove={removeCartItemHandler.bind(null, item.id)} onAdd={addCartItemHandler.bind(null, item)} />
     })}</ul>);
-    const totalAmount = `$${cartContext.totalAmount.toFixed(2)}`;
+    const totalAmount = `$${Math.abs(cartContext.totalAmount).toFixed(2)}`;
     const hasItems = cartContext.items.length > 0;
     const modalWindowHandler = () => {
         props.viewModal();
+    }
+    const clearCart = () => {
+        cartContext.clearCart();
     }
     return (
         <Modal viewModal={modalWindowHandler}>
@@ -29,8 +32,11 @@ const Cart = (props) => {
                 <span>{totalAmount}</span>
             </div>
             <div className={styles.actions}>
-                <button className={styles['button--alt']} onClick={modalWindowHandler}>Закрыть</button>
-                {hasItems && <button className={styles.button}>Заказать</button>}
+                <div>{hasItems && <button className={styles['button--alt']} onClick={clearCart}>Отчистить корзину</button>}</div>
+                <div>
+                    <button className={styles['button--alt']} onClick={modalWindowHandler}>Закрыть</button>
+                    {hasItems && <button className={styles.button}>Заказать</button>}
+                </div>
             </div>
         </Modal>
     );
