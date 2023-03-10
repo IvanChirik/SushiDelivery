@@ -1,41 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Card from '../UI/Card';
 import MealItem from './MealItem/MealItem.js';
 import styles from './MealList.module.css'
 
-const DUMMY_MEALS = [
-    {
-        id: "m1",
-        name: 'Ролл "Наоми"',
-        description:
-            "Сыр Филадельфия, куриное филе, масаго, помидор, огурец, кунжут",
-        price: 11.99,
-    },
-    {
-        id: "m2",
-        name: "Спайс в лососе",
-        description: "Рис, лосось, соус спайс",
-        price: 3.99,
-    },
-    {
-        id: "m3",
-        name: "Суши с угрем",
-        description: "Угорь копченый, соус унаги, кунжут",
-        price: 4.99,
-    },
-    {
-        id: "m4",
-        name: 'Салат "Поке с лососем"',
-        description: "Рис, лосось, огурец, чука, нори, стружка тунца, соус ореховый",
-        price: 7.99,
-    },
-];
+const DUMMY_MEALS = [];
+
 const MealList = (props) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const getMenuData = useCallback(async () => {
+        try {
+            setError(null);
+            setIsLoading(true);
+            const response = await fetch('https://react-joke-course-default-rtdb.europe-west1.firebasedatabase.app/meals.json');
+            if (response.status !== 200) {
+                throw new Error('Ошибка в получении данных');
+            }
+            const data = await response.json();
+            for (let item in data) {
+                DUMMY_MEALS.push({ id: item, name: data[item].name, description: data[item].description, price: data[item].price });
+            }
+        }
+        catch (e) {
+            setError(e.message);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }, []);
+    const contentMessage = <p style={{ textAlign: 'center', fontSize: '1.5rem' }}>{error ? error : `Загрузка меню...`}</p>;
+
+    useEffect(() => {
+        getMenuData();
+    }, [getMenuData]);
     return (
         <section className={styles.meals}>
             <Card>
                 <ul>
-                    {DUMMY_MEALS.map((meal) => { return <MealItem key={meal.id} id={meal.id} name={meal.name} description={meal.description} price={meal.price} /> })}
+                    {(isLoading || error)
+                        ? contentMessage
+                        : DUMMY_MEALS.map((meal) => { return <MealItem key={meal.id} id={meal.id} name={meal.name} description={meal.description} price={meal.price} /> })}
                 </ul>
             </Card>
         </section>
