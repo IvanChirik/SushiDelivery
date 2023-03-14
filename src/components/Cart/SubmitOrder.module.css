@@ -55,6 +55,20 @@
   color: white;
 }
 
+.actions .submit:disabled {
+  border: 1px solid #c5d6db;
+  background-color: #c5d6db;
+  color: rgb(85, 77, 77);
+  cursor: no-drop;
+}
+
+.actions .submit:disabled:hover,
+.actions .submit:disabled:active {
+  background-color: #c5d6db;
+  border-color: #c5d6db;
+  color: rgb(85, 77, 77);
+}
+
 .invalid label {
   color: red;
 }
