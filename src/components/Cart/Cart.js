@@ -8,6 +8,7 @@ import SubmitOrder from './SubmitOrder';
 
 const Cart = (props) => {
     const [viewSubmitOrder, setViewSubmitOrder] = useState(false);
+    const [clearOrderCart, setClearOrderCart] = useState(false);
     const submitOrderHandler = () => {
         setViewSubmitOrder(!viewSubmitOrder);
     }
@@ -36,15 +37,19 @@ const Cart = (props) => {
     const clearCart = () => {
         cartContext.clearCart();
     }
+    const orderStateView = () => {
+        setClearOrderCart(true);
+    }
+    const cartViewText = clearOrderCart ? <div className={styles.total}>Заказ поступил к исполнению, ждите звонка от оператора</div> : <div className={styles.total}>
+        <span>Итого</span>
+        <span>{totalAmount}</span>
+    </div>
     return (
         <Modal viewModal={modalWindowHandler}>
             {cartItem}
-            <div className={styles.total}>
-                <span>Итого</span>
-                <span>{totalAmount}</span>
-            </div>
+            {cartViewText}
             {viewSubmitOrder ?
-                <SubmitOrder onViewSubmitOrder={submitOrderHandler} /> :
+                <SubmitOrder onViewSubmitOrder={submitOrderHandler} onOrderState={orderStateView} /> :
                 <div className={styles.actions}>
                     <div>{hasItems && <button className={styles['button--alt']} onClick={clearCart}>Отчистить корзину</button>}</div>
                     <div>

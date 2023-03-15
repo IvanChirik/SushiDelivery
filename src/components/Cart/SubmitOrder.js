@@ -12,7 +12,6 @@ const SubmitOrder = (props) => {
         for (let item of cartContext.items) {
             newDeliveryItems.push({ [item.id]: item.amount });
         }
-        console.log(newDeliveryItems);
         const response = await fetch('https://react-joke-course-default-rtdb.europe-west1.firebasedatabase.app/delivery-meals.json', {
             method: 'POST',
             headers: {
@@ -37,6 +36,9 @@ const SubmitOrder = (props) => {
                 throw new Error('Заполните поля имени и адреса');
             }
             fetchCartDelivery();
+            props.onOrderState();
+            props.onViewSubmitOrder();
+            cartContext.clearCart();
         }
         catch (e) {
             console.log(e.message);
@@ -46,11 +48,11 @@ const SubmitOrder = (props) => {
         <form className={styles.form} onSubmit={submitHandler}>
             <div className={styles.control}>
                 <label htmlFor='name'>Имя</label>
-                <input id='name' type='text' onChange={setNameInputValue} value={nameInputValue} />
+                <input id='name' type='text' onChange={setNameInputValue} value={nameInputValue} placeholder='Введите имя' />
             </div>
             <div className={styles.control}>
                 <label htmlFor='city'>Адрес доставки</label>
-                <input id='city' type='text' onChange={setAdressInputValue} value={adressInputValue} />
+                <input id='city' type='text' onChange={setAdressInputValue} value={adressInputValue} placeholder='Введите адрес с номером дома и квартиры' />
             </div>
             <div className={styles.actions}>
                 <button type='button' onClick={props.onViewSubmitOrder}>Отмена</button>

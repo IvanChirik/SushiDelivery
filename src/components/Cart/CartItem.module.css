@@ -34,7 +34,7 @@
 
 .actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 @media (min-width: 768px) {
@@ -62,4 +62,10 @@
 .cart-item button:active {
   background-color: #03485d;
   color: white;
+}
+
+.cart-item button:disabled {
+  color: black;
+  background-color: #ccc;
+  border-color: #ccc;
 }
